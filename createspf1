@@ -1,0 +1,32 @@
+#!/bin/perl
+
+print "createspf1 - create SPF1 records for the given domain\n";
+print "=====================================================\n";
+
+use strict;
+use warnings;
+
+my ($inputfile) = @ARGV;
+my $curhost = "";
+
+if (not defined $inputfile) {
+	die "Need to specify input file\n";
+}
+#print "inputfile is $inputfile\n";
+
+
+sub OutputLine
+{
+	print "v=spf1 a:$curhost.$inputfile mx:$curhost.$inputfile -all\n";
+}
+open my $fh, '<', "$inputfile" or die $!;
+while (<$fh>)
+{
+	# line contents's automatically stored in the $_ variable
+	chop();
+	$curhost = $_;
+	OutputLine();
+}
+close $fh or die $!;
+
+exit 0;
