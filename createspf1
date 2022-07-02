@@ -8,18 +8,30 @@ use warnings;
 
 my ($inputfile) = @ARGV;
 my $curhost = "";
+my $CredFile = "creds.txt";
+my $DomainAdmin = "";
+my $DomainPassword = "";
 
 if (not defined $inputfile) {
 	die "Need to specify input file\n";
 }
-#print "inputfile is $inputfile\n";
+
+open my $fh, '<', "$CredFile" or die $!;
+while (<$fh>)
+{
+	# Read In the credentials
+	chop();
+	($DomainAdmin, $DomainPassword) = split('	', $_);
+	print "Admin = $DomainAdmin, Password=$DomainPassword\n";
+}
+close $fh or die $!;
 
 
 sub OutputLine
 {
 	print "v=spf1 a:$curhost.$inputfile mx:$curhost.$inputfile -all\n";
 }
-open my $fh, '<', "$inputfile" or die $!;
+open $fh, '<', "$inputfile" or die $!;
 while (<$fh>)
 {
 	# line contents's automatically stored in the $_ variable
